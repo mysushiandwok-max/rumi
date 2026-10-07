@@ -8,7 +8,7 @@ export function HeroPodium() {
         alt="Rumí K-Beauty"
         fill
         priority
-        quality={95}
+        quality={75}
         sizes="(max-width: 1024px) 90vw, 576px"
         className="object-cover"
       />

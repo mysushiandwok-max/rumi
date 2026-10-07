@@ -23,6 +23,8 @@ export function BrandLogo({
     <img
       src={`/uploads/logos/${brand.slug}.svg`}
       alt={brand.name}
+      loading="lazy"
+      decoding="async"
       onError={() => setErrored(true)}
       className={className}
     />

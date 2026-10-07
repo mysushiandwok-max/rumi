@@ -211,6 +211,8 @@ export function CategoryCard({ category, palette }: { category: Category; palett
           src={category.imagePath}
           alt=""
           fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          quality={75}
           className="pointer-events-none object-cover transition-transform duration-300 ease-out-strong group-hover:scale-105"
         />
       ) : null}

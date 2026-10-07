@@ -74,6 +74,8 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
               <img
                 src={product.images[0]}
                 alt={product.name}
+                loading="lazy"
+                decoding="async"
                 className={`absolute inset-0 h-full w-full object-cover transition-[transform,opacity,filter] duration-500 ease-out-strong group-hover:scale-[1.06] ${
                   secondaryImage ? "group-hover:opacity-0 group-hover:blur-[2px]" : ""
                 }`}
@@ -82,6 +84,8 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
                 <img
                   src={secondaryImage}
                   alt=""
+                  loading="lazy"
+                  decoding="async"
                   aria-hidden
                   className="absolute inset-0 h-full w-full scale-[1.1] object-cover opacity-0 blur-[2px] transition-[transform,opacity,filter] duration-500 ease-out-strong group-hover:scale-[1.06] group-hover:opacity-100 group-hover:blur-none"
                 />
