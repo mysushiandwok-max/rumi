@@ -187,12 +187,16 @@ function createDb() {
   const db = new Database(path.join(dataDir, "rumi.db"));
   db.pragma("journal_mode = WAL");
   db.pragma("foreign_keys = ON");
-  db.exec(SCHEMA);
-  migrate(db);
-  seedIfEmpty(db);
-  seedShippingIfEmpty(db);
-  seedCategoryContentIfEmpty(db);
-  seedEmailTemplatesIfMissing(db);
+  // Un solo bloqueo para todo el arranque: `next build` abre la base en varios procesos a la vez
+  // y, sin esto, todos ven la tabla vacía y siembran a la vez (UNIQUE categories.slug).
+  db.transaction(() => {
+    db.exec(SCHEMA);
+    migrate(db);
+    seedIfEmpty(db);
+    seedShippingIfEmpty(db);
+    seedCategoryContentIfEmpty(db);
+    seedEmailTemplatesIfMissing(db);
+  }).immediate();
   return db;
 }
 
