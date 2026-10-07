@@ -1,24 +1,31 @@
 import type { Metadata } from "next";
-import { Quicksand, Inter, Caveat } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 
-const quicksand = Quicksand({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
+// Fuentes locales (paquetes @fontsource): next/font/google descarga de Google en cada build y falla en Hostinger.
+const quicksand = localFont({
+  src: [
+    { path: "../../node_modules/@fontsource/quicksand/files/quicksand-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "../../node_modules/@fontsource/quicksand/files/quicksand-latin-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "../../node_modules/@fontsource/quicksand/files/quicksand-latin-700-normal.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-quicksand",
   display: "swap",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
+const inter = localFont({
+  src: "../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2",
+  weight: "100 900",
   variable: "--font-inter",
   display: "swap",
 });
 
-const caveat = Caveat({
-  subsets: ["latin"],
-  weight: ["600", "700"],
+const caveat = localFont({
+  src: [
+    { path: "../../node_modules/@fontsource/caveat/files/caveat-latin-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "../../node_modules/@fontsource/caveat/files/caveat-latin-700-normal.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-caveat",
   display: "swap",
 });
