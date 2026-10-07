@@ -1,8 +1,9 @@
 import "server-only";
 import fs from "node:fs";
 import path from "node:path";
+import { DATA_ROOT } from "@/lib/paths";
 
-const BANNER_DIR = path.join(process.cwd(), "public", "uploads", "brand-banners");
+const BANNER_DIR = path.join(DATA_ROOT, "public", "uploads", "brand-banners");
 const BANNER_EXTENSIONS = ["webp", "jpg", "jpeg", "png"];
 
 // Drop a file named {slug}.{ext} into public/uploads/brand-banners/ to set a brand's banner background.

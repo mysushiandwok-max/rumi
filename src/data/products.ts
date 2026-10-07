@@ -5,10 +5,11 @@ import { db } from "@/lib/db/client";
 import { formatCOP } from "@/lib/format";
 import { normalizeProductLanding } from "@/lib/product-landing";
 import type { AccentTone, Product, ProductArtVariant, ProductLanding, ProductStatus } from "@/lib/types";
+import { DATA_ROOT } from "@/lib/paths";
 
 export { formatCOP };
 
-const PRODUCT_UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "products");
+const PRODUCT_UPLOAD_DIR = path.join(DATA_ROOT, "public", "uploads", "products");
 const FALLBACK_IMAGE_EXTENSIONS = ["webp", "jpg", "jpeg", "png"];
 
 // Falls back to /uploads/products/{slug}.{ext} when no image is linked in the DB,

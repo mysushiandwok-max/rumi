@@ -5,6 +5,7 @@ import { seedIfEmpty } from "./seed";
 import { seedShippingIfEmpty } from "./seed-shipping";
 import { backfillLegacyCategoryBanners, seedCategoryContentIfEmpty } from "./category-content-defaults";
 import { seedEmailTemplatesIfMissing } from "./seed-email-templates";
+import { DATA_ROOT } from "@/lib/paths";
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS categories (
@@ -181,7 +182,7 @@ function migrate(db: Database.Database) {
 }
 
 function createDb() {
-  const dataDir = path.join(process.cwd(), "data");
+  const dataDir = path.join(DATA_ROOT, "data");
   fs.mkdirSync(dataDir, { recursive: true });
   const db = new Database(path.join(dataDir, "rumi.db"));
   db.pragma("journal_mode = WAL");

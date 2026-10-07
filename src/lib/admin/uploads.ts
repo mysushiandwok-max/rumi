@@ -3,8 +3,9 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 import sharp from "sharp";
+import { DATA_ROOT } from "@/lib/paths";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "products");
+const UPLOAD_DIR = path.join(DATA_ROOT, "public", "uploads", "products");
 const MAX_DIMENSION = 1600;
 const WEBP_QUALITY = 82;
 
@@ -27,7 +28,7 @@ export async function saveProductImage(file: File): Promise<string> {
   return `/uploads/products/${filename}`;
 }
 
-const BANNER_DIR = path.join(process.cwd(), "public", "uploads", "banners");
+const BANNER_DIR = path.join(DATA_ROOT, "public", "uploads", "banners");
 const BANNER_MAX_WIDTH = 2560;
 const BANNER_WEBP_QUALITY = 90;
 // Solo se borran las fotos subidas desde el dashboard (nombre uuid), nunca las que se copiaron a mano a la carpeta.
@@ -51,10 +52,10 @@ export async function saveCategoryBanner(file: File): Promise<{ url: string; wid
 
 export async function deleteCategoryBanner(bannerPath: string): Promise<void> {
   if (!UPLOADED_BANNER_PATH.test(bannerPath)) return;
-  await fs.unlink(path.join(process.cwd(), "public", bannerPath)).catch(() => {});
+  await fs.unlink(path.join(DATA_ROOT, "public", bannerPath)).catch(() => {});
 }
 
-const REVIEW_DIR = path.join(process.cwd(), "public", "uploads", "reviews");
+const REVIEW_DIR = path.join(DATA_ROOT, "public", "uploads", "reviews");
 const UPLOADED_REVIEW_PATH = /^\/uploads\/reviews\/[0-9a-f-]{36}\.webp$/;
 
 // Fotos de reseñas de clientas: se re-codifican a webp (así se descarta cualquier cosa que no sea imagen,
@@ -74,11 +75,11 @@ export async function saveReviewPhoto(file: File): Promise<string> {
 
 export async function deleteReviewPhoto(photoPath: string): Promise<void> {
   if (!UPLOADED_REVIEW_PATH.test(photoPath)) return;
-  await fs.unlink(path.join(process.cwd(), "public", photoPath)).catch(() => {});
+  await fs.unlink(path.join(DATA_ROOT, "public", photoPath)).catch(() => {});
 }
 
 export async function deleteProductImage(imagePath: string): Promise<void> {
   if (!imagePath.startsWith("/uploads/products/")) return;
-  const filePath = path.join(process.cwd(), "public", imagePath);
+  const filePath = path.join(DATA_ROOT, "public", imagePath);
   await fs.unlink(filePath).catch(() => {});
 }
