@@ -6,6 +6,7 @@ import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/com
 import { ArrowRightIcon } from "@/components/icons";
 import { BrandLogo } from "@/components/BrandLogo";
 import { getBrandsByPopularity } from "@/data/brands";
+import type { Brand } from "@/lib/types";
 
 const EXCLUDED_SLUGS = ["firmskin"];
 
