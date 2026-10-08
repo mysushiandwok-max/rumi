@@ -5,8 +5,10 @@ import { getAllOrders } from "@/lib/admin/orders";
 export const dynamic = "force-dynamic";
 
 function csvEscape(value: string | number) {
-  const str = String(value);
-  return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+  let str = String(value);
+  // Excel ejecuta las celdas que empiezan por = + - @ (el nombre y el correo los escribe el cliente).
+  if (typeof value === "string" && /^[=+\-@\t\r]/.test(str)) str = `'${str}`;
+  return /[",\n\r]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
 }
 
 export async function GET() {

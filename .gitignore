@@ -38,3 +38,11 @@ next-env.d.ts
 /FOTOS PRODUCTOS/
 /skills-lock.json
 *.pdf
+
+# más secretos y bases locales
+.env.*
+!.env.example
+*.key
+*.db
+*.db-*
+*.sqlite*

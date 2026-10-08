@@ -27,9 +27,14 @@ export async function GET(_req: Request, { params }: { params: Promise<{ path: s
   try {
     const data = await fs.readFile(file);
     return new Response(new Uint8Array(data), {
-      headers: { "Content-Type": type, "Cache-Control": UUID_NAME.test(file)
+      headers: {
+        "Content-Type": type,
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
+        "Cache-Control": UUID_NAME.test(file)
           ? "public, max-age=31536000, immutable"
-          : "public, max-age=86400, stale-while-revalidate=604800" },
+          : "public, max-age=86400, stale-while-revalidate=604800",
+      },
     });
   } catch {
     return new Response("Not found", { status: 404 });

@@ -7,6 +7,7 @@ import type { OrderStatus, PaymentStatus } from "@/lib/types";
 import { getShippingSettings } from "@/lib/admin/settings";
 import { getShippingPriceForLocation } from "@/lib/admin/shipping";
 import { sendTemplatedEmail } from "@/lib/email/mailer";
+import { getProductBySlug } from "@/data/products";
 import { formatCOP } from "@/lib/format";
 import { STATUS_EVENT, PAYMENT_STATUS_EVENT, buildOrderItemsHtml, orderEmailVars } from "@/lib/email/order-email";
 
@@ -64,13 +65,52 @@ export async function updateOrderTrackingAction(id: number, formData: FormData) 
   }
 }
 
-export async function placeOrderAction(input: CreateOrderInput) {
-  const settings = getShippingSettings();
-  const matchedPrice = getShippingPriceForLocation(input.shipping.department, input.shipping.city);
-  const rate = matchedPrice ?? settings.flatRate;
-  const shippingCost = input.subtotal >= settings.freeShippingThreshold ? 0 : rate;
+// Endpoint público: nada de lo que llega del navegador se toma como cierto. Precios, nombres y totales se
+// recalculan con la base de datos, y los datos del cliente se validan en formato y longitud.
+function cleanText(value: unknown, min: number, max: number): string {
+  const text = typeof value === "string" ? value.trim() : "";
+  if (text.length < min || text.length > max) throw new Error("Datos de envío inválidos");
+  return text;
+}
 
-  const order = createOrder({ ...input, shippingCost });
+export async function placeOrderAction(input: CreateOrderInput) {
+  const raw = input?.shipping;
+  const shipping = {
+    fullName: cleanText(raw?.fullName, 2, 100),
+    email: cleanText(raw?.email, 5, 120),
+    phone: cleanText(raw?.phone, 7, 20),
+    address: cleanText(raw?.address, 5, 200),
+    city: cleanText(raw?.city, 2, 80),
+    department: cleanText(raw?.department, 2, 80),
+    notes: raw?.notes ? cleanText(raw.notes, 0, 500) : undefined,
+  };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(shipping.email)) throw new Error("Correo inválido");
+  if (!/^[0-9+\s()-]{7,20}$/.test(shipping.phone)) throw new Error("Teléfono inválido");
+
+  if (!Array.isArray(input.items) || input.items.length === 0 || input.items.length > 50) throw new Error("Carrito inválido");
+  const merged = new Map<string, number>();
+  for (const item of input.items) {
+    const quantity = Number(item?.quantity);
+    if (typeof item?.productSlug !== "string" || !Number.isInteger(quantity) || quantity < 1 || quantity > 20) {
+      throw new Error("Carrito inválido");
+    }
+    merged.set(item.productSlug, (merged.get(item.productSlug) ?? 0) + quantity);
+  }
+  const items = [...merged].map(([slug, quantity]) => {
+    const product = getProductBySlug(slug);
+    if (!product || product.status !== "published" || quantity > 20 || product.stock < quantity) {
+      throw new Error("Carrito inválido");
+    }
+    return { productSlug: product.slug, productName: product.name, unitPrice: product.price, quantity };
+  });
+  const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+
+  const settings = getShippingSettings();
+  const matchedPrice = getShippingPriceForLocation(shipping.department, shipping.city);
+  const rate = matchedPrice ?? settings.flatRate;
+  const shippingCost = subtotal >= settings.freeShippingThreshold ? 0 : rate;
+
+  const order = createOrder({ shipping, items, subtotal, shippingCost });
 
   const adminEmail = process.env.ADMIN_EMAIL;
   if (adminEmail) {

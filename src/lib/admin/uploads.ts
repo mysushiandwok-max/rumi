@@ -6,12 +6,14 @@ import sharp from "sharp";
 import { DATA_ROOT } from "@/lib/paths";
 
 const UPLOAD_DIR = path.join(DATA_ROOT, "public", "uploads", "products");
+// Rechaza imágenes con más de 40 megapíxeles (bombas de descompresión) en cualquier subida.
+const SHARP_INPUT = { limitInputPixels: 40_000_000, failOn: "error" } as const;
 const MAX_DIMENSION = 1600;
 const WEBP_QUALITY = 82;
 
 export async function saveProductImage(file: File): Promise<string> {
   const bytes = Buffer.from(await file.arrayBuffer());
-  const optimized = await sharp(bytes)
+  const optimized = await sharp(bytes, SHARP_INPUT)
     .rotate()
     .resize({
       width: MAX_DIMENSION,
@@ -37,7 +39,7 @@ const UPLOADED_BANNER_PATH = /^\/uploads\/banners\/[0-9a-f-]{36}\.webp$/;
 // Guarda con nombre único: así cambiar la foto cambia la URL y Next no sirve una versión vieja de su caché.
 export async function saveCategoryBanner(file: File): Promise<{ url: string; width: number; height: number }> {
   const bytes = Buffer.from(await file.arrayBuffer());
-  const optimized = await sharp(bytes)
+  const optimized = await sharp(bytes, SHARP_INPUT)
     .rotate()
     .resize({ width: BANNER_MAX_WIDTH, withoutEnlargement: true })
     .webp({ quality: BANNER_WEBP_QUALITY })
@@ -62,7 +64,7 @@ const UPLOADED_REVIEW_PATH = /^\/uploads\/reviews\/[0-9a-f-]{36}\.webp$/;
 // y los metadatos como la ubicación GPS del celular) y se achican a un tamaño razonable.
 export async function saveReviewPhoto(file: File): Promise<string> {
   const bytes = Buffer.from(await file.arrayBuffer());
-  const optimized = await sharp(bytes)
+  const optimized = await sharp(bytes, SHARP_INPUT)
     .rotate()
     .resize({ width: 1200, height: 1200, fit: "inside", withoutEnlargement: true })
     .webp({ quality: 80 })
@@ -78,8 +80,10 @@ export async function deleteReviewPhoto(photoPath: string): Promise<void> {
   await fs.unlink(path.join(DATA_ROOT, "public", photoPath)).catch(() => {});
 }
 
+// Regex estricta: `startsWith` dejaba pasar rutas con `..` (p. ej. /uploads/products/../../data/rumi.db).
+const UPLOADED_PRODUCT_PATH = /^\/uploads\/products\/[0-9a-f-]{36}\.webp$/;
+
 export async function deleteProductImage(imagePath: string): Promise<void> {
-  if (!imagePath.startsWith("/uploads/products/")) return;
-  const filePath = path.join(DATA_ROOT, "public", imagePath);
-  await fs.unlink(filePath).catch(() => {});
+  if (!UPLOADED_PRODUCT_PATH.test(imagePath)) return;
+  await fs.unlink(path.join(DATA_ROOT, "public", imagePath)).catch(() => {});
 }

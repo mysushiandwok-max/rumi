@@ -1,4 +1,5 @@
 import "server-only";
+import { randomInt } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db/client";
 import type { Order, OrderItem, OrderStatus, PaymentStatus, ShippingInfo } from "@/lib/types";
@@ -91,7 +92,7 @@ export type CreateOrderInput = {
 
 function generateOrderNumber(): string {
   for (let attempt = 0; attempt < 5; attempt++) {
-    const candidate = `RUMI-${Math.floor(100000 + Math.random() * 900000)}`;
+    const candidate = `RUMI-${randomInt(100000, 1000000)}`;
     const existing = db.prepare("SELECT id FROM orders WHERE order_number = ?").get(candidate);
     if (!existing) return candidate;
   }
