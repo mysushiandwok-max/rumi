@@ -141,14 +141,14 @@ export function ProductDetailView({
           )}
           <h1 className="mt-2 font-display text-3xl font-bold leading-tight text-ink sm:text-4xl">{product.name}</h1>
           <div className="mt-3 flex items-center gap-3">
-            {product.reviewCount > 0 ? (
-              <a href="#resenas" className="hover:opacity-80">
-                <RatingStars rating={product.rating} reviewCount={product.reviewCount} size="md" />
-              </a>
-            ) : (
-              <RatingStars rating={product.rating} reviewCount={product.reviewCount} size="md" />
+            {product.reviewCount > 0 && (
+              <>
+                <a href="#resenas" className="hover:opacity-80">
+                  <RatingStars rating={product.rating} reviewCount={product.reviewCount} size="md" />
+                </a>
+                <span className="text-sm text-ink/40">·</span>
+              </>
             )}
-            <span className="text-sm text-ink/40">·</span>
             <span className="text-sm text-ink/60">{product.size}</span>
           </div>
 

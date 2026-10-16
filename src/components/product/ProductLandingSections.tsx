@@ -450,7 +450,7 @@ export function ProductFaqSection({ product }: { product: Product }) {
     <section className="container-page mt-24 grid gap-8 sm:mt-32 lg:grid-cols-[2fr_3fr] lg:gap-16">
       <div>
         <h2 className="text-balance font-display text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl">
-          Lo que nos preguntan de este
+          Lo que nos preguntan de este producto
         </h2>
         <p className="mt-3 text-sm text-ink/60 sm:text-base">¿Te quedó alguna duda? Escríbenos y te asesoramos.</p>
       </div>

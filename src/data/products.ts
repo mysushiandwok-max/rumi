@@ -261,12 +261,11 @@ export function recalculateProductRating(slug: string): void {
       "SELECT AVG(rating) as avg, COUNT(*) as count FROM reviews WHERE product_slug = ? AND status = 'approved'"
     )
     .get(slug) as { avg: number | null; count: number };
-  if (count > 0) {
-    db.prepare("UPDATE products SET rating = ?, review_count = ? WHERE slug = ?").run(
-      Math.round(avg! * 10) / 10,
-      count,
-      slug
-    );
-    revalidatePath(`/producto/${slug}`);
-  }
+  // Sin reseñas aprobadas vuelve a 0 (antes se quedaba el valor viejo).
+  db.prepare("UPDATE products SET rating = ?, review_count = ? WHERE slug = ?").run(
+    count > 0 ? Math.round(avg! * 10) / 10 : 0,
+    count,
+    slug
+  );
+  revalidatePath(`/producto/${slug}`);
 }

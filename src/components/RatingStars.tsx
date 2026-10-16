@@ -9,6 +9,8 @@ export function RatingStars({
   reviewCount?: number;
   size?: "sm" | "md";
 }) {
+  // Sin reseñas reales no se muestran estrellas vacías.
+  if (reviewCount === 0) return null;
   const starSize = size === "sm" ? "h-3.5 w-3.5" : "h-4 w-4";
   return (
     <div className="flex items-center gap-1.5">
