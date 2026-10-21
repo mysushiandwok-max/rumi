@@ -278,9 +278,7 @@ export function CheckoutClient({
           <form onSubmit={handlePaymentSubmit} className="card-surface flex flex-col gap-5 p-6 sm:p-8">
             <h2 className="font-display text-xl font-bold text-ink">Pago</h2>
             {boldEnabled ? (
-              <p className="text-sm text-ink/70">
-                Pagas de forma segura con Bold (tarjetas, PSE, Nequi y más). Te llevaremos a la página de Bold para completar el pago.
-              </p>
+              <BoldBanner />
             ) : (
               <>
             <div className="flex items-start gap-3 rounded-xl2 bg-lavender-50 p-4 text-sm text-lavender-600">
@@ -423,5 +421,28 @@ function OrderSummary({
         <span className="font-display text-lg font-bold text-ink">{formatCOP(total)}</span>
       </div>
     </aside>
+  );
+}
+
+const BOLD_METHODS = ["Tarjeta crédito", "Tarjeta débito", "PSE", "Nequi", "Botón Bancolombia", "Daviplata"];
+
+function BoldBanner() {
+  return (
+    <div className="overflow-hidden rounded-xl2 border border-border bg-gradient-to-r from-lavender-50 to-blush-50 p-5 sm:p-6">
+      <div className="flex items-center gap-3">
+        <ShieldIcon className="h-6 w-6 shrink-0 text-lavender-600" />
+        <div>
+          <p className="font-display text-base font-bold text-ink">Pago seguro con Bold</p>
+          <p className="text-sm text-ink/70">Elige cómo pagar en la página de Bold. Tus datos de pago nunca pasan por nuestra tienda.</p>
+        </div>
+      </div>
+      <ul className="mt-4 flex flex-wrap gap-2">
+        {BOLD_METHODS.map((m) => (
+          <li key={m} className="rounded-full border border-border bg-white px-3 py-1.5 text-xs font-semibold text-ink/80">
+            {m}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
