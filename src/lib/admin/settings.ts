@@ -5,7 +5,7 @@ import type { ConnectorSettings, ShippingSettings } from "@/lib/types";
 
 const DEFAULT_SHIPPING: ShippingSettings = { freeShippingThreshold: 150000, flatRate: 12000 };
 const DEFAULT_CONNECTORS: ConnectorSettings = {
-  bold: { apiKey: "", secretKey: "", enabled: false },
+  bold: { apiKey: "", secretKey: "", enabled: false, sandbox: true },
   carrier: { name: "", apiKey: "", enabled: false },
 };
 
@@ -39,10 +39,12 @@ export function setShippingSettings(settings: ShippingSettings): void {
 }
 
 export function getConnectorSettings(): ConnectorSettings {
-  return readSetting("connectors", DEFAULT_CONNECTORS);
+  const stored = readSetting("connectors", DEFAULT_CONNECTORS);
+  return { ...stored, bold: { ...DEFAULT_CONNECTORS.bold, ...stored.bold } };
 }
 
 export function setConnectorSettings(settings: ConnectorSettings): void {
   writeSetting("connectors", settings);
   revalidatePath("/admin/conectores");
+  revalidatePath("/admin/bold");
 }

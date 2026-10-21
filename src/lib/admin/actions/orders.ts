@@ -1,15 +1,18 @@
 "use server";
 
 import { requireAdminSession } from "@/lib/admin/auth";
-import { updateOrderStatus, updatePaymentStatus, updateOrderTracking, createOrder, getOrderById } from "@/lib/admin/orders";
+import { updateOrderStatus, updateOrderTracking, createOrder, getOrderById } from "@/lib/admin/orders";
 import type { CreateOrderInput } from "@/lib/admin/orders";
 import type { OrderStatus, PaymentStatus } from "@/lib/types";
 import { getShippingSettings } from "@/lib/admin/settings";
 import { getShippingPriceForLocation } from "@/lib/admin/shipping";
+import { setPaymentStatusAndNotify } from "@/lib/admin/payments";
+import { buildBoldParams } from "@/lib/bold";
+import { headers } from "next/headers";
 import { sendTemplatedEmail } from "@/lib/email/mailer";
 import { getProductBySlug } from "@/data/products";
 import { formatCOP } from "@/lib/format";
-import { STATUS_EVENT, PAYMENT_STATUS_EVENT, buildOrderItemsHtml, orderEmailVars } from "@/lib/email/order-email";
+import { STATUS_EVENT, orderEmailVars } from "@/lib/email/order-email";
 
 export async function updateOrderStatusAction(id: number, status: OrderStatus) {
   await requireAdminSession();
@@ -23,20 +26,7 @@ export async function updateOrderStatusAction(id: number, status: OrderStatus) {
 
 export async function updatePaymentStatusAction(id: number, status: PaymentStatus) {
   await requireAdminSession();
-  const current = getOrderById(id);
-  if (!current) return;
-  const order = updatePaymentStatus(id, status);
-  if (current.paymentStatus === status) return;
-
-  const vars = orderEmailVars(order);
-  const event = PAYMENT_STATUS_EVENT[status];
-  if (event) await sendTemplatedEmail(event, order.customerEmail, vars);
-
-  // La confirmación de pedido (con el listado de productos) sale cuando el pago queda
-  // confirmado, no al crear el pedido: así nadie recibe "pedido confirmado" de un pago que falló.
-  if (status === "pagado") {
-    await sendTemplatedEmail("COMPRA", order.customerEmail, { ...vars, items_html: buildOrderItemsHtml(order) });
-  }
+  await setPaymentStatusAndNotify(id, status);
 }
 
 export async function updateOrderTrackingAction(id: number, formData: FormData) {
@@ -121,5 +111,8 @@ export async function placeOrderAction(input: CreateOrderInput) {
     });
   }
 
-  return { orderNumber: order.orderNumber };
+  // Con Bold activo el navegador abre su checkout; el pago se confirma por webhook (/api/bold/webhook).
+  const origin = (await headers()).get("origin") ?? "https://rumiskincare.com";
+  const bold = buildBoldParams(order.orderNumber, order.total, `${origin}/checkout/gracias`);
+  return { orderNumber: order.orderNumber, bold };
 }

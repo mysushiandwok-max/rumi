@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import {
@@ -17,6 +17,23 @@ import { placeOrderAction } from "@/lib/admin/actions/orders";
 import { COLOMBIA_DEPARTMENTS } from "@/lib/colombia";
 import type { ShippingLookupRow } from "@/lib/admin/shipping";
 
+type BoldParams = { apiKey: string; orderId: string; amount: number; currency: string; integritySignature: string; redirectionUrl: string; description: string };
+
+declare global {
+  interface Window {
+    BoldCheckout?: new (config: BoldParams) => { open: () => void };
+  }
+}
+
+function openBold(params: BoldParams) {
+  const open = () => new window.BoldCheckout!(params).open();
+  if (window.BoldCheckout) return open();
+  const script = document.createElement("script");
+  script.src = "https://checkout.bold.co/library/boldPaymentButton.js";
+  script.onload = open;
+  document.head.appendChild(script);
+}
+
 type Step = "envio" | "pago" | "confirmacion";
 
 const STEPS: { key: Step; label: string }[] = [
@@ -31,7 +48,9 @@ export function CheckoutClient({
   freeShippingThreshold,
   flatRate,
   shippingTable,
+  boldEnabled,
 }: {
+  boldEnabled: boolean;
   freeShippingThreshold: number;
   flatRate: number;
   shippingTable: ShippingLookupRow[];
@@ -41,6 +60,8 @@ export function CheckoutClient({
   const [orderNumber, setOrderNumber] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  // El pedido se crea una sola vez: si cierra la ventana de Bold y vuelve a pulsar, se reabre el mismo cobro.
+  const boldParams = useRef<BoldParams | null>(null);
   const [shipping, setShipping] = useState(() => {
     const citiesInDept = shippingTable.filter((r) => r.department === DEFAULT_DEPARTMENT);
     return {
@@ -108,12 +129,17 @@ export function CheckoutClient({
         })
         .filter((item): item is NonNullable<typeof item> => item !== null);
 
+      if (boldParams.current) return openBold(boldParams.current);
       const result = await placeOrderAction({
         shipping,
         items,
         subtotal,
         shippingCost,
       });
+      if (result.bold) {
+        boldParams.current = result.bold;
+        return openBold(result.bold);
+      }
       setOrderNumber(result.orderNumber);
       clear();
       setStep("confirmacion");
@@ -268,6 +294,12 @@ export function CheckoutClient({
         <div className="grid gap-10 lg:grid-cols-[1fr_360px]">
           <form onSubmit={handlePaymentSubmit} className="card-surface flex flex-col gap-5 p-6 sm:p-8">
             <h2 className="font-display text-xl font-bold text-ink">Pago</h2>
+            {boldEnabled ? (
+              <p className="text-sm text-ink/70">
+                Pagas de forma segura con Bold (tarjetas, PSE, Nequi y más). Se abrirá una ventana para completar el pago.
+              </p>
+            ) : (
+              <>
             <div className="flex items-start gap-3 rounded-xl2 bg-lavender-50 p-4 text-sm text-lavender-600">
               <ShieldIcon className="h-5 w-5 shrink-0" />
               <p>
@@ -291,6 +323,9 @@ export function CheckoutClient({
               </Field>
             </div>
 
+              </>
+            )}
+
             {error && (
               <p className="rounded-xl2 bg-blush-50 px-4 py-3 text-sm font-semibold text-blush-700">{error}</p>
             )}
@@ -304,7 +339,7 @@ export function CheckoutClient({
                 ← Volver a envío
               </button>
               <button type="submit" disabled={isSubmitting} className="btn-primary w-full py-3.5 text-sm sm:w-fit sm:px-8 disabled:opacity-60">
-                {isSubmitting ? "Procesando..." : "Confirmar pedido"}
+                {isSubmitting ? "Procesando..." : boldEnabled ? "Pagar con Bold" : "Confirmar pedido"}
                 <ArrowRightIcon className="h-4 w-4" />
               </button>
             </div>

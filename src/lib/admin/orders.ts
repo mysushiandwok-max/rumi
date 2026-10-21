@@ -32,7 +32,17 @@ type OrderItemRow = {
   product_name: string;
   unit_price: number;
   quantity: number;
+  images: string | null;
 };
+
+function firstImage(images: string | null): string | undefined {
+  try {
+    const first = (JSON.parse(images ?? "[]") as unknown[])[0];
+    return typeof first === "string" ? first : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 function rowToItem(row: OrderItemRow): OrderItem {
   return {
@@ -41,6 +51,7 @@ function rowToItem(row: OrderItemRow): OrderItem {
     productName: row.product_name,
     unitPrice: row.unit_price,
     quantity: row.quantity,
+    imageUrl: firstImage(row.images),
   };
 }
 
@@ -69,7 +80,10 @@ function rowToOrder(row: OrderRow, items: OrderItem[]): Order {
 }
 
 function getItemsForOrder(orderId: number): OrderItem[] {
-  const rows = db.prepare("SELECT * FROM order_items WHERE order_id = ?").all(orderId) as OrderItemRow[];
+  const rows = db
+    .prepare(
+      `SELECT i.*, p.images FROM order_items i LEFT JOIN products p ON p.slug = i.product_slug WHERE i.order_id = ?`
+    ).all(orderId) as OrderItemRow[];
   return rows.map(rowToItem);
 }
 

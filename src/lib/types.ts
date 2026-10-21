@@ -155,6 +155,8 @@ export type OrderItem = {
   productName: string;
   unitPrice: number;
   quantity: number;
+  // Foto principal del producto hoy (vacío si el producto ya no existe o no tiene fotos).
+  imageUrl?: string;
 };
 
 export type ShippingInfo = {
@@ -227,6 +229,6 @@ export type ShippingSettings = {
 };
 
 export type ConnectorSettings = {
-  bold: { apiKey: string; secretKey: string; enabled: boolean };
+  bold: { apiKey: string; secretKey: string; enabled: boolean; sandbox: boolean };
   carrier: { name: string; apiKey: string; enabled: boolean };
 };

@@ -34,12 +34,19 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
             <h2 className="font-display text-base font-bold text-ink">Productos</h2>
             <ul className="mt-4 flex flex-col divide-y divide-border/60">
               {order.items.map((item) => (
-                <li key={item.id} className="flex items-center justify-between py-3 text-sm">
-                  <div>
-                    <p className="font-semibold text-ink">{item.productName}</p>
-                    <p className="text-xs text-ink/50">
-                      {formatCOP(item.unitPrice)} × {item.quantity}
-                    </p>
+                <li key={item.id} className="flex items-center justify-between gap-4 py-3 text-sm">
+                  <div className="flex items-center gap-3">
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} alt={item.productName} className="h-14 w-14 shrink-0 rounded-lg border border-border/60 bg-white object-contain" />
+                    ) : (
+                      <div className="h-14 w-14 shrink-0 rounded-lg bg-blush-50" />
+                    )}
+                    <div>
+                      <p className="font-semibold text-ink">{item.productName}</p>
+                      <p className="text-xs text-ink/50">
+                        {formatCOP(item.unitPrice)} × {item.quantity}
+                      </p>
+                    </div>
                   </div>
                   <span className="font-display font-bold text-ink">{formatCOP(item.unitPrice * item.quantity)}</span>
                 </li>

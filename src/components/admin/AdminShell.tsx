@@ -55,6 +55,7 @@ const NAV: NavSection[] = [
     group: "Sistema",
     items: [
       { href: "/admin/correos", label: "Correos", icon: MailIcon },
+      { href: "/admin/bold", label: "Bold (pagos)", icon: PlugIcon },
       { href: "/admin/conectores", label: "Conectores", icon: PlugIcon },
     ],
   },
