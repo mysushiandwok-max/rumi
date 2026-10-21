@@ -1,5 +1,6 @@
 "use client";
 
+import { BoldUiKit } from "@/components/BoldUiKit";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ProductArt } from "@/components/illustrations/ProductArt";
@@ -225,6 +226,8 @@ export function ProductDetailView({
               <HeartIcon className={`h-5 w-5 ${saved ? "fill-blush-500 text-blush-500" : "text-ink/60"}`} />
             </button>
           </div>
+
+          <BoldUiKit options="type=slider" className="mt-4" />
 
           <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-5 rounded-xl2 bg-blush-50/70 p-5">
             {GUARANTEES.map(({ icon: Icon, title, text, href }) => (

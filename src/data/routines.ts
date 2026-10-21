@@ -1,6 +1,6 @@
 import type { AccentTone, Routine, RoutineCollection, RoutineLevel, RoutineSkinType, RoutineStep } from "@/lib/types";
 
-// Las 40 rutinas reales de Rumí (ver rutinas-skincare-rumi-40.pdf, uso interno). Armadas solo con
+// Las 50 rutinas de Rumí (las 40 del PDF más 10 nuevas con productos recientes) (ver rutinas-skincare-rumi-40.pdf, uso interno). Armadas solo con
 // productos que existen en el catálogo (src/data/products.ts) — cada productSlug debe existir ahí.
 
 // Slugs de producto usados en las rutinas, en un solo lugar para no repetir strings largos ni tipearlos mal.
@@ -29,6 +29,23 @@ const P = {
   eyeNidaRevive: "nida-revive-eye-cream",
   eyeVt: "vt-cica-reedle-shot-lifting-eye-cream",
   maskHydrogel: "cosrx-advanced-snail-mucin-glass-glow-hydrogel-mask",
+  // Productos nuevos (ids 45+)
+  tonerAnua: "anua-heartleaf-77-soothing-toner",
+  tonerTirtir: "tirtir-milk-skin-toner",
+  essenceMixsoon: "mixsoon-bean-essence-jumbo",
+  foamAnua: "anua-heartleaf-quercetinol-pore-deep-cleansing-foam",
+  cleanserClay: "fully-green-tomato-clay-mask-cleanser",
+  peelingGel: "skin1004-centella-tea-trica-mild-peeling-gel",
+  clayStick: "skin1004-poremizing-quick-clay-stick-mask",
+  creamPinkCollagen: "medicube-pdrn-pink-collagen-capsule-cream",
+  creamTxa: "medicube-txa-niacinamide-capsule-cream",
+  creamVitC: "medicube-deep-vita-c-capsule-cream",
+  creamPurito: "purito-seoul-mighty-bamboo-panthenol-cream",
+  stickMatte: "beauty-of-joseon-matte-sun-stick-mugwort-camelia",
+  mistDrAlthea: "dr-althea-345-relief-cream-mist",
+  mistAnuaHA: "anua-pdrn-hyaluronic-acid-hydrating-capsule-mist",
+  eyeSerumAxis: "axis-y-vegan-collagen-eye-serum",
+  maskMixsoonHydrogel: "mixsoon-bean-collagen-hydrogel-mask",
 } as const;
 
 // Título + descripción genérica por rol de paso, para no repetir el mismo texto largo 160 veces.
@@ -50,6 +67,9 @@ const ROLE_COPY = {
   },
   contornoOjos: { title: "Contorno de ojos", description: "Cuida la piel más fina y delicada del rostro." },
   mascarilla: { title: "Mascarilla", description: "Un boost extra de tratamiento, 1 o 2 veces por semana." },
+  tonico: { title: "Tónico", description: "Equilibra la piel después de limpiar y la deja lista para los siguientes pasos." },
+  exfoliante: { title: "Exfoliante suave", description: "Retira células muertas sin irritar. Solo 1 vez por semana." },
+  bruma: { title: "Bruma", description: "Un toque de hidratación y calma, también útil para refrescar durante el día." },
 } as const;
 
 type Role = keyof typeof ROLE_COPY;
@@ -397,7 +417,7 @@ export const routines: Routine[] = [
       ["limpiador", P.cleanser],
       ["esencia", P.essenceSnail],
       ["crema", P.creamAnuaPdrn],
-      ["contornoOjos", P.eyeNidaRevive, "Va solo alrededor de los ojos. No usar la misma noche que una mascarilla de retinol."]
+      ["contornoOjos", P.eyeSerumAxis, "Va solo alrededor de los ojos. No usar la misma noche que una mascarilla de retinol."]
     ),
   }),
 
@@ -413,7 +433,7 @@ export const routines: Routine[] = [
     timeOfDay: "Mañana",
     tone: "peach",
     description: "Controla el brillo y las imperfecciones sin resecar la piel grasa.",
-    steps: steps(["limpiador", P.cleanser], ["serum", P.serumDarkSpot], ["protectorSolar", P.spfAquaFresh]),
+    steps: steps(["limpiador", P.foamAnua], ["serum", P.serumDarkSpot], ["protectorSolar", P.spfAquaFresh]),
   }),
   routine({
     collection: "tipo-piel",
@@ -429,7 +449,7 @@ export const routines: Routine[] = [
     steps: steps(
       ["limpiador", P.cleanser],
       ["esencia", P.essenceSnail],
-      ["crema", P.creamNida],
+      ["crema", P.creamPinkCollagen],
       ["protectorSolar", P.spfBirch]
     ),
   }),
@@ -465,7 +485,7 @@ export const routines: Routine[] = [
     steps: steps(
       ["limpiador", P.cleanser],
       ["esencia", P.essenceSnail],
-      ["crema", P.creamAnuaPdrn],
+      ["crema", P.creamTxa],
       ["protectorSolar", P.spfRice]
     ),
   }),
@@ -534,7 +554,7 @@ export const routines: Routine[] = [
     description: "Texturas ligeras para climas cálidos y húmedos, con un stick para retocar durante el día.",
     steps: steps(
       ["limpiador", P.cleanser],
-      ["esencia", P.essenceSnail],
+      ["tonico", P.tonerAnua],
       ["protectorSolar", P.spfAquaFresh],
       ["protectorBarra", P.stickVita, "Para retocar la protección durante el día."]
     ),
@@ -589,7 +609,7 @@ export const routines: Routine[] = [
     steps: steps(
       ["limpiador", P.cleanser],
       ["ampolla", P.ampollaCentella],
-      ["crema", P.creamAnuaPdrn],
+      ["crema", P.creamVitC],
       ["protectorSolar", P.spfRice]
     ),
   }),
@@ -729,7 +749,7 @@ export const routines: Routine[] = [
     steps: steps(
       ["limpiador", P.cleanser],
       ["esencia", P.essenceSnail],
-      ["mascarilla", P.maskHydrogel, "Déjala el tiempo que indique el empaque y sella con la crema. 1 o 2 veces por semana."],
+      ["mascarilla", P.maskMixsoonHydrogel, "Déjala el tiempo que indique el empaque y sella con la crema. 1 o 2 veces por semana."],
       ["crema", P.creamAnuaPdrn]
     ),
   }),
@@ -744,7 +764,7 @@ export const routines: Routine[] = [
     timeOfDay: "Mañana",
     tone: "blush",
     description: "La tendencia skinimalism en su versión más simple: solo 3 productos, sin relleno.",
-    steps: steps(["limpiador", P.cleanser], ["crema", P.creamDrAlthea], ["protectorSolar", P.spfAquaFresh]),
+    steps: steps(["limpiador", P.cleanser], ["crema", P.creamPurito], ["protectorSolar", P.spfAquaFresh]),
   }),
   routine({
     collection: "tendencias",
@@ -760,9 +780,196 @@ export const routines: Routine[] = [
     description: "El look \"clean girl\" que domina redes: piel natural, luminosa y sin necesidad de maquillaje.",
     steps: steps(
       ["limpiador", P.cleanser],
-      ["esencia", P.essenceSnail],
+      ["esencia", P.essenceMixsoon],
       ["contornoOjos", P.eyeAnua360],
       ["protectorSolar", P.spfRice]
+    ),
+  }),
+
+  // ── Nuevas: mezclan productos recientes con los de siempre ───────────────
+  routine({
+    collection: "noche",
+    slug: "poros-limpios-de-noche",
+    name: "Poros limpios de noche",
+    tagline: "Limpieza a fondo sin dejar la piel tirante",
+    skinConcern: "Poros y exceso de grasa",
+    level: "Intermedia",
+    skinTypes: ["Grasa", "Mixta"],
+    timeOfDay: "Noche",
+    tone: "lavender",
+    description:
+      "Espuma de limpieza profunda, tónico calmante y niacinamida para controlar la grasa y afinar la apariencia de los poros.",
+    steps: steps(["limpiador", P.foamAnua], ["tonico", P.tonerAnua], ["serum", P.serumDarkSpot], ["crema", P.creamTxa]),
+  }),
+  routine({
+    collection: "noche",
+    slug: "exfoliacion-suave-semanal",
+    name: "Exfoliación suave semanal",
+    tagline: "Textura más lisa, sin irritar",
+    skinConcern: "Textura irregular y piel opaca",
+    level: "Intermedia",
+    skinTypes: ["Normal", "Mixta"],
+    timeOfDay: "Noche",
+    tone: "lavender",
+    description:
+      "Una noche a la semana, un gel exfoliante suave retira las células muertas; el resto de la rutina repone la hidratación.",
+    steps: steps(
+      ["limpiador", P.cleanser],
+      ["exfoliante", P.peelingGel, "Solo 1 vez por semana: masajea suave y enjuaga bien. Evítalo si la piel está irritada."],
+      ["esencia", P.essenceSnail],
+      ["crema", P.creamPurito]
+    ),
+  }),
+  routine({
+    collection: "tipo-piel",
+    slug: "arcilla-y-calma",
+    name: "Arcilla y calma",
+    tagline: "Purifica la zona T y vuelve a equilibrar",
+    skinConcern: "Piel grasa con puntos negros",
+    level: "Intermedia",
+    skinTypes: ["Grasa", "Mixta"],
+    timeOfDay: "Noche",
+    tone: "peach",
+    description:
+      "Limpiador de arcilla y mascarilla en stick para purificar, seguidos de una bruma y una crema que calman la piel.",
+    steps: steps(
+      ["limpiador", P.cleanserClay],
+      ["mascarilla", P.clayStick, "Aplícala en la zona T, déjala el tiempo del empaque y retira. 1 o 2 veces por semana."],
+      ["bruma", P.mistDrAlthea],
+      ["crema", P.creamDrAlthea]
+    ),
+  }),
+  routine({
+    collection: "manana",
+    slug: "tonico-y-esencia-coreana",
+    name: "Tónico y esencia coreana",
+    tagline: "Capas ligeras para una piel de porcelana",
+    skinConcern: "Hidratación ligera por capas",
+    level: "Intermedia",
+    skinTypes: ["Todo tipo de piel"],
+    timeOfDay: "Mañana",
+    tone: "blush",
+    description: "Tónico lechoso y esencia de frijol en capas finas, selladas con crema y protector solar.",
+    steps: steps(
+      ["limpiador", P.cleanser],
+      ["tonico", P.tonerTirtir],
+      ["esencia", P.essenceMixsoon],
+      ["crema", P.creamNida],
+      ["protectorSolar", P.spfRice]
+    ),
+  }),
+  routine({
+    collection: "manana",
+    slug: "antimanchas-con-niacinamida",
+    name: "Antimanchas con niacinamida",
+    tagline: "Uniforma el tono desde la mañana",
+    skinConcern: "Manchas y marcas post-acné",
+    level: "Intermedia",
+    skinTypes: ["Todo tipo de piel"],
+    timeOfDay: "Mañana",
+    tone: "blush",
+    description:
+      "Ampolla de glutatión, crema con ácido tranexámico y niacinamida, y protector solar para que las manchas no vuelvan a oscurecerse.",
+    steps: steps(
+      ["limpiador", P.cleanser],
+      ["ampolla", P.ampollaGlutathione],
+      ["crema", P.creamTxa],
+      ["protectorSolar", P.spfAquaFresh]
+    ),
+  }),
+  routine({
+    collection: "manana",
+    slug: "glow-con-crema-de-vitamina-c",
+    name: "Glow con crema de vitamina C",
+    tagline: "Luminosidad sin sumar un sérum",
+    skinConcern: "Piel apagada y cansada",
+    level: "Iniciación",
+    skinTypes: ["Todo tipo de piel"],
+    timeOfDay: "Mañana",
+    tone: "blush",
+    description: "Limpieza con espuma, bruma hidratante y una crema con vitamina C para dar luz a la piel apagada.",
+    steps: steps(
+      ["limpiador", P.foamAnua],
+      ["bruma", P.mistAnuaHA],
+      ["crema", P.creamVitC],
+      ["protectorSolar", P.spfBirch]
+    ),
+  }),
+  routine({
+    collection: "tendencias",
+    slug: "pdrn-capsula-total",
+    name: "PDRN cápsula total",
+    tagline: "PDRN de la bruma a la crema",
+    skinConcern: "Tendencia 2026: PDRN",
+    level: "Avanzada",
+    skinTypes: ["Todo tipo de piel", "Madura"],
+    featured: true,
+    timeOfDay: "Noche",
+    tone: "peach",
+    description:
+      "Bruma, sérum, crema y contorno de ojos con PDRN: la versión completa de la tendencia para reparar y dar firmeza.",
+    steps: steps(
+      ["limpiador", P.cleanser],
+      ["bruma", P.mistAnuaHA],
+      ["serum", P.serumPdrn],
+      ["crema", P.creamPinkCollagen],
+      ["contornoOjos", P.eyeAnua360]
+    ),
+  }),
+  routine({
+    collection: "noche",
+    slug: "ojos-con-colageno",
+    name: "Ojos con colágeno",
+    tagline: "Contorno firme y descansado",
+    skinConcern: "Líneas finas y ojeras",
+    level: "Intermedia",
+    skinTypes: ["Madura", "Todo tipo de piel"],
+    timeOfDay: "Noche",
+    tone: "lavender",
+    description:
+      "Tónico, sérum de ojos con colágeno y crema nutritiva para cuidar la zona más fina del rostro antes de dormir.",
+    steps: steps(
+      ["limpiador", P.cleanser],
+      ["tonico", P.tonerTirtir],
+      ["contornoOjos", P.eyeSerumAxis, "Una gota pequeña, solo alrededor de los ojos."],
+      ["crema", P.creamNida]
+    ),
+  }),
+  routine({
+    collection: "tipo-piel",
+    slug: "barrera-reparada-piel-sensible",
+    name: "Barrera reparada (piel sensible)",
+    tagline: "Calma y refuerza una piel reactiva",
+    skinConcern: "Piel sensible y barrera dañada",
+    level: "Intermedia",
+    skinTypes: ["Sensible"],
+    timeOfDay: "Noche",
+    tone: "peach",
+    description:
+      "Tónico de heartleaf, ampolla de centella y crema con pantenol para calmar y reforzar la barrera sin irritar.",
+    steps: steps(
+      ["limpiador", P.cleanser],
+      ["tonico", P.tonerAnua],
+      ["ampolla", P.ampollaCentella],
+      ["crema", P.creamPurito]
+    ),
+  }),
+  routine({
+    collection: "clima",
+    slug: "playa-y-calor-acabado-mate",
+    name: "Playa y calor, acabado mate",
+    tagline: "Protección sin brillo bajo el sol",
+    skinConcern: "Piel grasa en clima caluroso",
+    level: "Iniciación",
+    skinTypes: ["Grasa", "Mixta"],
+    timeOfDay: "Mañana",
+    tone: "mint",
+    description:
+      "Espuma que limpia sin resecar, protector ligero y un stick mate para retocar en la playa o en la calle.",
+    steps: steps(
+      ["limpiador", P.foamAnua],
+      ["protectorSolar", P.spfAquaFresh],
+      ["protectorBarra", P.stickMatte, "Retoca cada 2 horas o después de sudar o nadar."]
     ),
   }),
 ];
