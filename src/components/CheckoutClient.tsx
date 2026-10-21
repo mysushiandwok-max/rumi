@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import {
@@ -424,9 +424,23 @@ function OrderSummary({
   );
 }
 
-const BOLD_METHODS = ["Tarjeta crédito", "Tarjeta débito", "PSE", "Nequi", "Botón Bancolombia", "Daviplata"];
+const BOLD_KIT_TARGET = "bold-ui-kit-target";
 
+// Sello oficial de Bold con los logos de sus medios de pago. El script lee sus opciones de su propia URL y se
+// ejecuta una sola vez por página, así que se reinicia al montar/desmontar para que funcione al volver al paso.
 function BoldBanner() {
+  useEffect(() => {
+    const w = window as unknown as { boldUIKKitAlreadyProcessed?: boolean };
+    w.boldUIKKitAlreadyProcessed = false;
+    const script = document.createElement("script");
+    script.src = `https://bold.co/library/ui-kit.js?type=static&theme=light&layout=horizontal&target=${BOLD_KIT_TARGET}`;
+    document.body.appendChild(script);
+    return () => {
+      script.remove();
+      document.getElementById(BOLD_KIT_TARGET)?.replaceChildren();
+    };
+  }, []);
+
   return (
     <div className="overflow-hidden rounded-xl2 border border-border bg-gradient-to-r from-lavender-50 to-blush-50 p-5 sm:p-6">
       <div className="flex items-center gap-3">
@@ -436,13 +450,8 @@ function BoldBanner() {
           <p className="text-sm text-ink/70">Elige cómo pagar en la página de Bold. Tus datos de pago nunca pasan por nuestra tienda.</p>
         </div>
       </div>
-      <ul className="mt-4 flex flex-wrap gap-2">
-        {BOLD_METHODS.map((m) => (
-          <li key={m} className="rounded-full border border-border bg-white px-3 py-1.5 text-xs font-semibold text-ink/80">
-            {m}
-          </li>
-        ))}
-      </ul>
+      {/* El kit trae un tamaño fijo y pequeño (logos de 26px): zoom lo agranda sin tocar su CSS. */}
+      <div id={BOLD_KIT_TARGET} className="mt-5 origin-left [zoom:1.6]" />
     </div>
   );
 }
