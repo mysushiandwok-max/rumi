@@ -7,7 +7,7 @@ import type { OrderStatus, PaymentStatus } from "@/lib/types";
 import { getShippingSettings } from "@/lib/admin/settings";
 import { getShippingPriceForLocation } from "@/lib/admin/shipping";
 import { setPaymentStatusAndNotify } from "@/lib/admin/payments";
-import { buildBoldParams } from "@/lib/bold";
+import { buildBoldUrl } from "@/lib/bold";
 import { headers } from "next/headers";
 import { sendTemplatedEmail } from "@/lib/email/mailer";
 import { getProductBySlug } from "@/data/products";
@@ -113,6 +113,6 @@ export async function placeOrderAction(input: CreateOrderInput) {
 
   // Con Bold activo el navegador abre su checkout; el pago se confirma por webhook (/api/bold/webhook).
   const origin = (await headers()).get("origin") ?? "https://rumiskincare.com";
-  const bold = buildBoldParams(order.orderNumber, order.total, `${origin}/checkout/gracias`);
+  const bold = buildBoldUrl(order.orderNumber, order.total, origin);
   return { orderNumber: order.orderNumber, bold };
 }

@@ -17,23 +17,6 @@ import { placeOrderAction } from "@/lib/admin/actions/orders";
 import { COLOMBIA_DEPARTMENTS } from "@/lib/colombia";
 import type { ShippingLookupRow } from "@/lib/admin/shipping";
 
-type BoldParams = { apiKey: string; orderId: string; amount: number; currency: string; integritySignature: string; redirectionUrl: string; description: string };
-
-declare global {
-  interface Window {
-    BoldCheckout?: new (config: BoldParams) => { open: () => void };
-  }
-}
-
-function openBold(params: BoldParams) {
-  const open = () => new window.BoldCheckout!(params).open();
-  if (window.BoldCheckout) return open();
-  const script = document.createElement("script");
-  script.src = "https://checkout.bold.co/library/boldPaymentButton.js";
-  script.onload = open;
-  document.head.appendChild(script);
-}
-
 type Step = "envio" | "pago" | "confirmacion";
 
 const STEPS: { key: Step; label: string }[] = [
@@ -60,8 +43,8 @@ export function CheckoutClient({
   const [orderNumber, setOrderNumber] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  // El pedido se crea una sola vez: si cierra la ventana de Bold y vuelve a pulsar, se reabre el mismo cobro.
-  const boldParams = useRef<BoldParams | null>(null);
+  // El pedido se crea una sola vez: si vuelve atrás desde Bold y pulsa de nuevo, se reutiliza el mismo cobro.
+  const boldUrl = useRef<string | null>(null);
   const [shipping, setShipping] = useState(() => {
     const citiesInDept = shippingTable.filter((r) => r.department === DEFAULT_DEPARTMENT);
     return {
@@ -129,7 +112,7 @@ export function CheckoutClient({
         })
         .filter((item): item is NonNullable<typeof item> => item !== null);
 
-      if (boldParams.current) return openBold(boldParams.current);
+      if (boldUrl.current) return void (window.location.href = boldUrl.current);
       const result = await placeOrderAction({
         shipping,
         items,
@@ -137,8 +120,8 @@ export function CheckoutClient({
         shippingCost,
       });
       if (result.bold) {
-        boldParams.current = result.bold;
-        return openBold(result.bold);
+        boldUrl.current = result.bold;
+        return void (window.location.href = result.bold);
       }
       setOrderNumber(result.orderNumber);
       clear();
@@ -296,7 +279,7 @@ export function CheckoutClient({
             <h2 className="font-display text-xl font-bold text-ink">Pago</h2>
             {boldEnabled ? (
               <p className="text-sm text-ink/70">
-                Pagas de forma segura con Bold (tarjetas, PSE, Nequi y más). Se abrirá una ventana para completar el pago.
+                Pagas de forma segura con Bold (tarjetas, PSE, Nequi y más). Te llevaremos a la página de Bold para completar el pago.
               </p>
             ) : (
               <>
