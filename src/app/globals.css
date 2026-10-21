@@ -232,3 +232,12 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* El carrusel de logos de Bold es lo único que sigue moviéndose con "reducir movimiento": es una cinta
+   pequeña y sin parpadeos, y sin animación solo se vería cortada. */
+@media (prefers-reduced-motion: reduce) {
+  #bold-ui-kit-target .bold-slide {
+    animation-duration: 14s !important;
+    animation-iteration-count: infinite !important;
+  }
+}
