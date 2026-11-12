@@ -169,6 +169,11 @@ function migrate(db: Database.Database) {
     db.exec("ALTER TABLE products ADD COLUMN landing TEXT");
   }
 
+  const orderColumns = db.prepare("PRAGMA table_info(orders)").all() as { name: string }[];
+  if (!orderColumns.some((column) => column.name === "customer_document")) {
+    db.exec("ALTER TABLE orders ADD COLUMN customer_document TEXT");
+  }
+
   const reviewColumns = db.prepare("PRAGMA table_info(reviews)").all() as { name: string }[];
   if (!reviewColumns.some((column) => column.name === "author_city")) {
     db.exec("ALTER TABLE reviews ADD COLUMN author_city TEXT");

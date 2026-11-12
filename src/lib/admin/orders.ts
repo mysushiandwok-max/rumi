@@ -10,6 +10,7 @@ type OrderRow = {
   customer_name: string;
   customer_email: string;
   customer_phone: string;
+  customer_document: string | null;
   address: string;
   city: string;
   department: string;
@@ -62,6 +63,7 @@ function rowToOrder(row: OrderRow, items: OrderItem[]): Order {
     customerName: row.customer_name,
     customerEmail: row.customer_email,
     customerPhone: row.customer_phone,
+    customerDocument: row.customer_document ?? undefined,
     address: row.address,
     city: row.city,
     department: row.department,
@@ -119,10 +121,10 @@ export function createOrder(input: CreateOrderInput): Order {
 
   const insertOrder = db.prepare(
     `INSERT INTO orders (
-      order_number, customer_name, customer_email, customer_phone, address, city, department,
+      order_number, customer_name, customer_email, customer_phone, customer_document, address, city, department,
       notes, subtotal, shipping_cost, total
     ) VALUES (
-      @orderNumber, @customerName, @customerEmail, @customerPhone, @address, @city, @department,
+      @orderNumber, @customerName, @customerEmail, @customerPhone, @customerDocument, @address, @city, @department,
       @notes, @subtotal, @shippingCost, @total
     )`
   );
@@ -138,6 +140,7 @@ export function createOrder(input: CreateOrderInput): Order {
       customerName: input.shipping.fullName,
       customerEmail: input.shipping.email,
       customerPhone: input.shipping.phone,
+      customerDocument: input.shipping.document,
       address: input.shipping.address,
       city: input.shipping.city,
       department: input.shipping.department,

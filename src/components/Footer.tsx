@@ -75,7 +75,7 @@ export function Footer() {
           </ul>
           <ul className="mt-6 space-y-2.5 text-sm text-ink/65">
             <li className="flex items-center gap-2">
-              <MailIcon className="h-4 w-4 shrink-0 text-blush-400" /> hola@rumiskincare.com
+              <MailIcon className="h-4 w-4 shrink-0 text-blush-400" /> contacto@rumiskincare.com
             </li>
             <li className="flex items-center gap-2">
               <PhoneIcon className="h-4 w-4 shrink-0 text-blush-400" /> +57 300 123 4567

@@ -123,6 +123,10 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                 <dt className="text-xs uppercase tracking-wide text-ink/40">Teléfono</dt>
                 <dd className="font-medium text-ink">{order.customerPhone}</dd>
               </div>
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-ink/40">Cédula</dt>
+                <dd className="font-medium text-ink">{order.customerDocument ?? "—"}</dd>
+              </div>
             </dl>
           </div>
 

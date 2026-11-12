@@ -163,6 +163,7 @@ export type ShippingInfo = {
   fullName: string;
   email: string;
   phone: string;
+  document: string;
   address: string;
   city: string;
   department: string;
@@ -175,6 +176,7 @@ export type Order = {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  customerDocument?: string; // cédula; los pedidos anteriores no la tienen
   address: string;
   city: string;
   department: string;

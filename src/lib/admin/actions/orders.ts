@@ -69,6 +69,7 @@ export async function placeOrderAction(input: CreateOrderInput) {
     fullName: cleanText(raw?.fullName, 2, 100),
     email: cleanText(raw?.email, 5, 120),
     phone: cleanText(raw?.phone, 7, 20),
+    document: cleanText(raw?.document, 5, 12),
     address: cleanText(raw?.address, 5, 200),
     city: cleanText(raw?.city, 2, 80),
     department: cleanText(raw?.department, 2, 80),
@@ -76,6 +77,7 @@ export async function placeOrderAction(input: CreateOrderInput) {
   };
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(shipping.email)) throw new Error("Correo inválido");
   if (!/^[0-9+\s()-]{7,20}$/.test(shipping.phone)) throw new Error("Teléfono inválido");
+  if (!/^\d{5,12}$/.test(shipping.document)) throw new Error("Cédula inválida");
 
   if (!Array.isArray(input.items) || input.items.length === 0 || input.items.length > 50) throw new Error("Carrito inválido");
   const merged = new Map<string, number>();

@@ -52,6 +52,7 @@ export function CheckoutClient({
       fullName: "",
       email: "",
       phone: "",
+      document: "",
       address: "",
       city: citiesInDept[0]?.name ?? "",
       department: DEFAULT_DEPARTMENT,
@@ -201,6 +202,19 @@ export function CheckoutClient({
                   onChange={(e) => setShipping({ ...shipping, phone: e.target.value })}
                   className="input-field"
                   placeholder="300 123 4567"
+                />
+              </Field>
+              <Field label="Cédula de ciudadanía" required>
+                <input
+                  required
+                  inputMode="numeric"
+                  pattern="[0-9]{5,12}"
+                  maxLength={12}
+                  title="Solo números, sin puntos ni espacios"
+                  value={shipping.document}
+                  onChange={(e) => setShipping({ ...shipping, document: e.target.value.replace(/\D/g, "") })}
+                  className="input-field"
+                  placeholder="1020304050"
                 />
               </Field>
               <Field label="Departamento" required>

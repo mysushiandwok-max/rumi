@@ -6,7 +6,7 @@ export const LEGAL_ENTITY = {
   legalName: "[Razón social o nombre del titular]",
   nit: "[NIT o cédula con dígito de verificación]",
   address: "[Dirección física], Bogotá D.C., Colombia",
-  email: "hola@rumiskincare.com",
+  email: "contacto@rumiskincare.com",
   phone: "+57 300 123 4567",
   hours: "lunes a viernes de 8:00 a. m. a 6:00 p. m. y sábados de 9:00 a. m. a 1:00 p. m.",
 };
