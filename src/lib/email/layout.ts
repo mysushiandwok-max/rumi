@@ -11,7 +11,7 @@ const BRAND = {
   border: "#F3E6E9",
 };
 
-export const SUPPORT_EMAIL = "hola@rumiskincare.com";
+export const SUPPORT_EMAIL = "contacto@rumiskincare.com";
 
 // logoSrc por defecto = data URI: sirve para la vista previa del admin, que
 // se renderiza en un iframe del navegador. Para el envío real por Resend,
