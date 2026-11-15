@@ -168,7 +168,7 @@ export function EmailTemplateForm({
                     <span className="min-w-0 truncate text-ink/70">{log.to}</span>
                     <span className="flex shrink-0 items-center gap-2">
                       <span className="text-ink/40">
-                        {new Date(log.createdAt).toLocaleString("es-CO", { dateStyle: "medium", timeStyle: "short" })}
+                        {new Date(log.createdAt).toLocaleString("es-CO", { timeZone: "America/Bogota", dateStyle: "medium", timeStyle: "short" })}
                       </span>
                       <span
                         className={`rounded-md px-1.5 py-0.5 font-semibold ${

@@ -76,7 +76,7 @@ function rowToOrder(row: OrderRow, items: OrderItem[]): Order {
     trackingNumber: row.tracking_number ?? undefined,
     carrier: row.carrier ?? undefined,
     items,
-    createdAt: row.created_at,
+    createdAt: row.created_at.replace(" ", "T") + "Z", // SQLite guarda UTC
     updatedAt: row.updated_at,
   };
 }

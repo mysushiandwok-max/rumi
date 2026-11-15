@@ -62,7 +62,7 @@ export default async function AdminOrdersPage({
                   <p className="text-xs text-ink/45">{order.customerEmail}</p>
                 </td>
                 <td className="px-5 py-3 text-ink/60">
-                  {new Date(order.createdAt).toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" })}
+                  {new Date(order.createdAt).toLocaleDateString("es-CO", { timeZone: "America/Bogota", day: "numeric", month: "short", year: "numeric" })}
                 </td>
                 <td className="px-5 py-3 font-semibold text-ink">{formatCOP(order.total)}</td>
                 <td className="px-5 py-3">

@@ -19,6 +19,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         <h1 className="font-display text-2xl font-bold text-ink">Pedido #{order.orderNumber}</h1>
         <p className="mt-1 text-sm text-ink/60">
           {new Date(order.createdAt).toLocaleDateString("es-CO", {
+            timeZone: "America/Bogota",
             day: "numeric",
             month: "long",
             year: "numeric",
