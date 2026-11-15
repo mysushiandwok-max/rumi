@@ -3,6 +3,7 @@ import { getAllProductsAdmin } from "@/data/products";
 import { getAllCategories } from "@/data/categories";
 import { formatCOP } from "@/lib/format";
 import { PlusIcon, SearchIcon } from "@/components/icons";
+import { StockToggle } from "@/components/admin/StockToggle";
 import { DeleteProductButton } from "@/components/admin/DeleteProductButton";
 
 export const metadata = { title: "Productos" };
@@ -117,6 +118,7 @@ export default async function AdminProductsPage({
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-end gap-3">
+                      <StockToggle id={product.id} name={product.name} stock={product.stock} />
                       <Link href={`/admin/productos/${product.id}`} className="text-sm font-semibold text-blush-600 hover:text-blush-700">
                         Editar
                       </Link>

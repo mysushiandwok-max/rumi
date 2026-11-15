@@ -123,3 +123,10 @@ export async function deleteProductAction(id: number) {
   }
   deleteProduct(id);
 }
+
+export async function setProductStockAction(id: number, stock: number) {
+  await requireAdminSession();
+  const existing = getProductById(id);
+  if (!existing || !Number.isInteger(stock) || stock < 0) return;
+  updateProduct(id, { ...existing, featured: !!existing.featured, stock });
+}
